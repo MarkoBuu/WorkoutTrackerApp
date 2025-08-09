@@ -1,0 +1,63 @@
+import kotlin.String;
+import kotlin.collections.List;
+
+CREATE TABLE Workout (
+    exerciseId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    imageURL TEXT NOT NULL,
+    exerciseType TEXT NOT NULL,
+    bodyParts TEXT AS List<String> NOT NULL,
+    equipments TEXT AS List<String> NOT NULL,
+    targetMuscles TEXT AS List<String> NOT NULL,
+    secondaryMuscles TEXT AS List<String> NOT NULL,
+    keywords TEXT AS List<String> NOT NULL,
+    isFavorite INTEGER NOT NULL
+);
+
+insertWorkout:
+INSERT INTO Workout(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles, keywords, isFavorite
+) VALUES (?,?,?,?,?,?,?,?,?,?
+);
+
+upsertWorkout {
+    UPDATE Workout
+    SET name = :name,
+    imageURL = :imageURL,
+    exerciseType = :exerciseType,
+    bodyParts = :bodyParts,
+    equipments = :equipments,
+    targetMuscles = :targetMuscles,
+    secondaryMuscles = :secondaryMuscles,
+    keywords = :keywords,
+    isFavorite = :isFavorite
+    WHERE exerciseId = :exerciseId;
+
+    INSERT OR IGNORE INTO Workout(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles, keywords, isFavorite)
+    VALUES (:exerciseId, :name, :imageURL, :exerciseType, :bodyParts, :equipments, :targetMuscles, :secondaryMuscles, :keywords, :isFavorite);
+
+}
+
+selectAllWorkouts:
+SELECT * FROM Workout;
+
+selectRecipeById:
+SELECT * FROM Workout WHERE exerciseId = ?;
+
+updateWorkout:
+UPDATE Workout
+ SET name = ?,
+    imageURL = ?,
+    exerciseType = ?,
+    bodyParts = ?,
+    equipments = ?,
+    targetMuscles = ?,
+    secondaryMuscles = ?,
+    keywords = ?,
+    isFavorite = ?
+    WHERE exerciseId = ?;
+
+deleteRecipeById:
+DELETE FROM Workout WHERE exerciseId = ?;
+
+deleteAllWorkouts:
+DELETE FROM Workout;
