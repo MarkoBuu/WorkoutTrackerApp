@@ -15,8 +15,8 @@ CREATE TABLE Workout (
 );
 
 insertWorkout:
-INSERT INTO Workout(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles, keywords, isFavorite
-) VALUES (?,?,?,?,?,?,?,?,?,?
+INSERT INTO Workout(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles, keywords, isFavorite)
+VALUES (?,?,?,?,?,?,?,?,?,?
 );
 
 upsertWorkout {
@@ -40,7 +40,7 @@ upsertWorkout {
 selectAllWorkouts:
 SELECT * FROM Workout;
 
-selectRecipeById:
+selectWorkoutById:
 SELECT * FROM Workout WHERE exerciseId = ?;
 
 updateWorkout:
@@ -56,7 +56,7 @@ UPDATE Workout
     isFavorite = ?
     WHERE exerciseId = ?;
 
-deleteRecipeById:
+deleteWorkoutById:
 DELETE FROM Workout WHERE exerciseId = ?;
 
 deleteAllWorkouts:

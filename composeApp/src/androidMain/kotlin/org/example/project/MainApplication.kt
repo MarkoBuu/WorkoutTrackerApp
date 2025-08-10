@@ -14,9 +14,10 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        setupKoin()
     }
 
-    fun setupKoin() {
+    private fun setupKoin() {
         initKoin(additionalModule = listOf(androidModules)) {
             androidContext(applicationContext)
         }
