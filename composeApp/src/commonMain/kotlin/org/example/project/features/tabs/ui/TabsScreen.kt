@@ -36,16 +36,19 @@ val tabItems = listOf(
 
 @Composable
 fun TabsRoute(
+    navigateToDetail: (String) -> Unit,
     tabNavController: NavHostController
 
 ) {
     TabsScreen(
-        tabNavController = tabNavController
+        tabNavController = tabNavController,
+        navigateToDetail = navigateToDetail
     )
 }
 
 @Composable
 fun TabsScreen(
+    navigateToDetail: (String) -> Unit,
     tabNavController: NavHostController
 ) {
     Scaffold(
@@ -108,7 +111,9 @@ fun TabsScreen(
             feedNavGraph {
 
             }
-            exercisesNavGraph()
+            exercisesNavGraph(navigateToDetail = navigateToDetail){
+
+            }
             favoritesNavGraph()
             profileNavGraph()
         }

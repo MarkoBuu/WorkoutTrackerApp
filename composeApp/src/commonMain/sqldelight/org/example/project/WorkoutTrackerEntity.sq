@@ -61,3 +61,80 @@ DELETE FROM Workout WHERE exerciseId = ?;
 
 deleteAllWorkouts:
 DELETE FROM Workout;
+
+
+CREATE TABLE WorkoutDetail (
+    exerciseId TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    imageURL TEXT NOT NULL,
+    exerciseType TEXT NOT NULL,
+    bodyParts TEXT AS List<String> NOT NULL,
+    equipments TEXT AS List<String> NOT NULL,
+    targetMuscles TEXT AS List<String> NOT NULL,
+    secondaryMuscles TEXT AS List<String> NOT NULL,
+    keywords TEXT AS List<String> NOT NULL,
+    overview TEXT NOT NULL,
+    instructions TEXT AS List<String> NOT NULL,
+    exerciseTips TEXT AS List<String> NOT NULL,
+    variations TEXT AS List<String> NOT NULL,
+    relatedExerciseIds TEXT AS List<String> NOT NULL,
+    videoUrl TEXT NOT NULL
+);
+
+insertWorkoutDetail:
+INSERT INTO WorkoutDetail(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles, keywords,
+overview, instructions, exerciseTips, variations, relatedExerciseIds, videoUrl)
+VALUES (?,?,?, ?, ?, ?, ?, ?,?,?,?,?,
+?, ?, ?
+);
+
+upsertWorkoutDetail {
+    UPDATE WorkoutDetail
+    SET name = :name,
+    imageURL = :imageURL,
+    exerciseType = :exerciseType,
+    bodyParts = :bodyParts,
+    equipments = :equipments,
+    targetMuscles = :targetMuscles,
+    secondaryMuscles = :secondaryMuscles,
+    keywords = :keywords,
+    overview = :overview,
+    instructions = :instructions,
+    exerciseTips = :exerciseTips,
+    variations = :variations,
+    relatedExerciseIds = :relatedExerciseIds,
+    videoUrl = :videoUrl
+    WHERE exerciseId = :exerciseId;
+
+    INSERT OR IGNORE INTO WorkoutDetail(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles,
+    keywords, overview, instructions, exerciseTips, variations, relatedExerciseIds, videoUrl)
+    VALUES (:exerciseId, :name, :imageURL, :exerciseType, :bodyParts, :equipments, :targetMuscles, :secondaryMuscles,
+    :keywords, :overview, :instructions, :exerciseTips, :variations,
+    :relatedExerciseIds, :videoUrl);
+
+}
+
+selectAllWorkoutDetails:
+SELECT * FROM WorkoutDetail;
+
+selectWorkoutDetailById:
+SELECT * FROM WorkoutDetail WHERE exerciseId = ?;
+
+updateWorkoutDetail:
+UPDATE WorkoutDetail
+ SET name = ?,
+    imageURL = ?,
+    exerciseType = ?,
+    bodyParts = ?,
+    equipments = ?,
+    targetMuscles = ?,
+    secondaryMuscles = ?,
+    keywords = ?,
+    overview = ?,
+    instructions = ?,
+    exerciseTips = ?,
+    variations = ?,
+    relatedExerciseIds = ?,
+    videoUrl = ?
+    WHERE exerciseId = ?;
+

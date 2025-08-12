@@ -1,6 +1,8 @@
 package org.example.project.features.common.data.database
 
 import org.example.project.Workout
+import org.example.project.WorkoutDetail
+import org.example.project.features.common.domain.entities.WorkoutDetailItem
 import org.example.project.features.common.domain.entities.WorkoutItem
 
 fun workoutEntityMapper(workout: Workout) = WorkoutItem(
@@ -14,4 +16,22 @@ fun workoutEntityMapper(workout: Workout) = WorkoutItem(
     secondaryMuscles = workout.secondaryMuscles,
     keywords = workout.keywords,
     isFavorite = workout.isFavorite == 1L
+)
+
+fun workoutDetailEntityMapper(workout: WorkoutDetail) = WorkoutDetailItem(
+    exerciseId = workout.exerciseId,
+    name = workout.name,
+    imageUrl = workout.imageURL,
+    bodyParts = workout.bodyParts,
+    equipments = workout.equipments,
+    exerciseType = workout.exerciseType,
+    targetMuscles = workout.targetMuscles,
+    secondaryMuscles = workout.secondaryMuscles,
+    keywords = workout.keywords,
+    overview = workout.overview,
+    instructions = workout.instructions,
+    exerciseTips = workout.exerciseTips,
+    variations = workout.variations,
+    relatedExerciseIds = workout.relatedExerciseIds,
+    videoUrl = workout.videoUrl,
 )

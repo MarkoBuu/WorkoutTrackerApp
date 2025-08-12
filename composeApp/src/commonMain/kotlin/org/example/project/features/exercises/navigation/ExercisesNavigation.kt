@@ -12,9 +12,13 @@ fun NavController.navigateToExercises(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.exercisesNavGraph(
+    navigateToDetail: (String) -> Unit,
+    navigateToSearch: () -> Unit
 ) {
     composable(Screen.Exercises.route) {
         ExercisesRoute(
+            navigateToSearch = navigateToSearch,
+            navigateToDetail = navigateToDetail
 
         )
     }

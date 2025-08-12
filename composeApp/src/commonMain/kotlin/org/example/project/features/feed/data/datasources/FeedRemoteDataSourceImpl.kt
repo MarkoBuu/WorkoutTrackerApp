@@ -18,7 +18,7 @@ class FeedRemoteDataSourceImpl(
             url {
                 parameters.append("limit", "30")
             }
-            header("x-rapidapi-key", "75bb857f61msh9ac96c92e5a3a2ap10cea5jsn3510e9295bd8")
+            header("x-rapidapi-key", "27718a3d09msh8b321aa8091d452p1493b2jsn1c52c8a15f6f")
         }
         val workoutListApiResponse = httpResponse.body<WorkoutListApiResponse>()
         return workoutListApiResponse.data.mapNotNull { it.toWorkoutItem() }

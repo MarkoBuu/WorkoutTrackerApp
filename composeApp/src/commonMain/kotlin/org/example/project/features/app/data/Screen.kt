@@ -1,5 +1,6 @@
 package org.example.project.features.app.data
 
+import org.example.project.features.detail.navigation.WORKOUT_ID_ARG
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import workouttracker.composeapp.generated.resources.Res
@@ -27,7 +28,7 @@ sealed class Screen(
 ) {
     data object Search : Screen("search", Res.string.search)
     data object Tabs : Screen("tabs", Res.string.tabs)
-    data object Detail : Screen("detail", Res.string.details)
+    data object Detail : Screen("detail?$WORKOUT_ID_ARG={$WORKOUT_ID_ARG}", Res.string.details)
 
 
     data object Home : Screen("home",

@@ -13,11 +13,13 @@ fun NavController.navigateToTabs(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.tabsNavGraph(
+    navigateToDetail: (String) -> Unit,
     tabNavController: NavHostController
 ) {
     composable(Screen.Tabs.route) {
         TabsRoute(
-            tabNavController = tabNavController
+            tabNavController = tabNavController,
+            navigateToDetail = navigateToDetail
         )
     }
 }

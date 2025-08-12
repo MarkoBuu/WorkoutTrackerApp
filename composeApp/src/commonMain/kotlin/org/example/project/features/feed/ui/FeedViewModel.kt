@@ -23,6 +23,8 @@ class FeedViewModel(
             getWorkoutList()
         }
     }
+
+
     private val _apiTestResult = mutableStateOf("Ready to test")
     val apiTestResult: State<String> = _apiTestResult
 
@@ -40,7 +42,7 @@ class FeedViewModel(
             )
     }
 
-    private suspend fun getWorkoutList(){
+    suspend fun getWorkoutList(){
         val workoutList = feedRepository.getWorkoutList()
         if(workoutList.isSuccess){
             _feedUiState.value = _feedUiState.value.copy(

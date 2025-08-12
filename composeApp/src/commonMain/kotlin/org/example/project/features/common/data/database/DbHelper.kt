@@ -4,6 +4,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.example.project.WokroutTrackerAppDb
 import org.example.project.Workout
+import org.example.project.WorkoutDetail
 import org.example.project.dbFactory.DatabaseFactory
 
 class DbHelper(
@@ -27,7 +28,18 @@ class DbHelper(
                 equipmentsAdapter = listOfStringsAdapter,
                 targetMusclesAdapter = listOfStringsAdapter,
                 secondaryMusclesAdapter = listOfStringsAdapter,
-                keywordsAdapter = listOfStringsAdapter
+                keywordsAdapter = listOfStringsAdapter,
+            ),
+            WorkoutDetailAdapter = WorkoutDetail.Adapter(
+                bodyPartsAdapter = listOfStringsAdapter,
+                equipmentsAdapter = listOfStringsAdapter,
+                targetMusclesAdapter = listOfStringsAdapter,
+                secondaryMusclesAdapter = listOfStringsAdapter,
+                keywordsAdapter = listOfStringsAdapter,
+                instructionsAdapter = listOfStringsAdapter,
+                exerciseTipsAdapter = listOfStringsAdapter,
+                variationsAdapter = listOfStringsAdapter,
+                relatedExerciseIdsAdapter = listOfStringsAdapter
             )
         )
     }

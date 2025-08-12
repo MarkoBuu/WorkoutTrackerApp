@@ -123,6 +123,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             implementation(libs.primitive.adapters)
+            implementation ("io.github.wojciechosak:calendar:1.0.2")
+
 
         }
 
