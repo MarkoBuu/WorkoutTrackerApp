@@ -89,7 +89,7 @@ class WorkoutTrackerDao(
         }
     }
 
-    suspend fun getWorkoutById(exerciseId: Long) : WorkoutItem? {
+    suspend fun getWorkoutById(exerciseId: String) : WorkoutItem? {
         return dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.selectWorkoutById(exerciseId).awaitAsOneOrNull()?.let {
                 workoutEntityMapper(it)
@@ -97,7 +97,7 @@ class WorkoutTrackerDao(
         }
     }
 
-    suspend fun deleteWorkoutById(exerciseId: Long){
+    suspend fun deleteWorkoutById(exerciseId: String){
          dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.deleteWorkoutById(exerciseId)
         }

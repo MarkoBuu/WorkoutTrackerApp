@@ -14,15 +14,13 @@ class FeedRemoteDataSourceImpl(
 ) : FeedRemoteDataSource {
 
     override suspend fun getWorkoutsList(): List<WorkoutItem> {
-        val httpResponse = httpClient.get("$BASE_URL/exercises") {
-            header("X-RapidAPI-Key", "75bb857f61msh9ac96c92e5a3a2ap10cea5jsn3510e9295bd8")
-            header("X-RapidAPI-Host", "exercisedb.p.rapidapi.com")
+        val httpResponse = httpClient.get("${BASE_URL}/exercises") {
             url {
-                parameters.append("limit", "10") // Default limit
+                parameters.append("limit", "30")
             }
+            header("x-rapidapi-key", "75bb857f61msh9ac96c92e5a3a2ap10cea5jsn3510e9295bd8")
         }
-
-        return httpResponse.body<WorkoutListApiResponse>().data
-            .mapNotNull { it.toWorkoutItem() }
+        val workoutListApiResponse = httpResponse.body<WorkoutListApiResponse>()
+        return workoutListApiResponse.data.mapNotNull { it.toWorkoutItem() }
     }
 }

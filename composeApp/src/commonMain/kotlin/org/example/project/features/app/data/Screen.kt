@@ -6,6 +6,9 @@ import workouttracker.composeapp.generated.resources.Res
 import workouttracker.composeapp.generated.resources.bookmark_selected
 import workouttracker.composeapp.generated.resources.bookmark_unselected
 import workouttracker.composeapp.generated.resources.details
+import workouttracker.composeapp.generated.resources.dumbbell_selected
+import workouttracker.composeapp.generated.resources.dumbbell_unselected
+import workouttracker.composeapp.generated.resources.exercises
 import workouttracker.composeapp.generated.resources.favorites
 import workouttracker.composeapp.generated.resources.home
 import workouttracker.composeapp.generated.resources.home_selected
@@ -26,10 +29,17 @@ sealed class Screen(
     data object Tabs : Screen("tabs", Res.string.tabs)
     data object Detail : Screen("detail", Res.string.details)
 
+
     data object Home : Screen("home",
         Res.string.home,
         selectedIcon = Res.drawable.home_selected,
         unselectedIcon = Res.drawable.home_unselected
+    )
+
+    data object Exercises : Screen("exercises",
+        Res.string.exercises,
+        selectedIcon = Res.drawable.dumbbell_selected,
+        unselectedIcon = Res.drawable.dumbbell_unselected
     )
 
     data object Favorites : Screen("favorites",
@@ -43,5 +53,6 @@ sealed class Screen(
         selectedIcon = Res.drawable.profile_selected,
         unselectedIcon = Res.drawable.profile_unselected
     )
+
 
 }

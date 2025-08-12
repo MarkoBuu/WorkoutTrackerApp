@@ -2,7 +2,7 @@ import kotlin.String;
 import kotlin.collections.List;
 
 CREATE TABLE Workout (
-    exerciseId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    exerciseId TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     imageURL TEXT NOT NULL,
     exerciseType TEXT NOT NULL,

@@ -1,5 +1,7 @@
 package org.example.project.features.feed.ui
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,22 @@ class FeedViewModel(
         viewModelScope.launch {
             getWorkoutList()
         }
+    }
+    private val _apiTestResult = mutableStateOf("Ready to test")
+    val apiTestResult: State<String> = _apiTestResult
+
+    fun testApiConnection() = viewModelScope.launch {
+        _apiTestResult.value = "Testing..."
+        _apiTestResult.value = feedRepository.getWorkoutList()
+            .fold(
+                onSuccess = { items ->
+                    if (items.isEmpty()) "Empty response"
+                    else "Success! Found ${items.size} items"
+                },
+                onFailure = { e ->
+                    "API Error: ${e.message ?: "Unknown error"}"
+                }
+            )
     }
 
     private suspend fun getWorkoutList(){

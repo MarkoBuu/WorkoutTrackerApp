@@ -6,13 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WorkoutListApiResponse (
     @SerialName("data")
-    val data: List<WorkoutApiItem>,  // Default empty list for safety
-
+    val data: List<WorkoutApiItem>,
     @SerialName("success")
-    val success: Boolean = false,  // If API includes success flag
-
+    val success: Boolean = false,
     @SerialName("meta")
-    val meta: MetaData? = null  // For pagination if available
+    val meta: MetaData? = null
 ) {
     @Serializable
     data class MetaData(

@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.example.project.features.app.data.Screen
+import org.example.project.features.exercises.navigation.exercisesNavGraph
 import org.example.project.features.favorites.navigation.favoritesNavGraph
 import org.example.project.features.feed.navigation.feedNavGraph
 import org.example.project.features.profile.navigation.profileNavGraph
@@ -28,6 +29,7 @@ import org.jetbrains.compose.resources.stringResource
 
 val tabItems = listOf(
     Screen.Home,
+    Screen.Exercises,
     Screen.Favorites,
     Screen.Profile
 )
@@ -101,11 +103,12 @@ fun TabsScreen(
         NavHost(
             tabNavController,
             startDestination = Screen.Home.route,
-            Modifier.padding(innerPadding))
-        {
+            Modifier.padding(innerPadding)
+        ) {
             feedNavGraph {
 
             }
+            exercisesNavGraph()
             favoritesNavGraph()
             profileNavGraph()
         }
