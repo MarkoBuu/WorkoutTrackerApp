@@ -55,6 +55,7 @@ fun WorkoutDetailApiItem.toWorkoutDetailItem(): WorkoutDetailItem? {
             variations = variations?: emptyList(),
             relatedExerciseIds = relatedExerciseIds?: emptyList(),
             videoUrl = videoUrl?:"",
+            isFavorite = false
         )
     else null
 }

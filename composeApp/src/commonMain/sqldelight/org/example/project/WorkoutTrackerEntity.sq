@@ -78,14 +78,15 @@ CREATE TABLE WorkoutDetail (
     exerciseTips TEXT AS List<String> NOT NULL,
     variations TEXT AS List<String> NOT NULL,
     relatedExerciseIds TEXT AS List<String> NOT NULL,
-    videoUrl TEXT NOT NULL
+    videoUrl TEXT NOT NULL,
+    isFavorite INTEGER NOT NULL
 );
 
 insertWorkoutDetail:
 INSERT INTO WorkoutDetail(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles, keywords,
-overview, instructions, exerciseTips, variations, relatedExerciseIds, videoUrl)
+overview, instructions, exerciseTips, variations, relatedExerciseIds, videoUrl, isFavorite)
 VALUES (?,?,?, ?, ?, ?, ?, ?,?,?,?,?,
-?, ?, ?
+?, ?, ?, ?
 );
 
 upsertWorkoutDetail {
@@ -103,14 +104,15 @@ upsertWorkoutDetail {
     exerciseTips = :exerciseTips,
     variations = :variations,
     relatedExerciseIds = :relatedExerciseIds,
-    videoUrl = :videoUrl
+    videoUrl = :videoUrl,
+    isFavorite = :isFavorite
     WHERE exerciseId = :exerciseId;
 
     INSERT OR IGNORE INTO WorkoutDetail(exerciseId, name, imageURL, exerciseType, bodyParts, equipments, targetMuscles, secondaryMuscles,
-    keywords, overview, instructions, exerciseTips, variations, relatedExerciseIds, videoUrl)
+    keywords, overview, instructions, exerciseTips, variations, relatedExerciseIds, videoUrl,isFavorite)
     VALUES (:exerciseId, :name, :imageURL, :exerciseType, :bodyParts, :equipments, :targetMuscles, :secondaryMuscles,
     :keywords, :overview, :instructions, :exerciseTips, :variations,
-    :relatedExerciseIds, :videoUrl);
+    :relatedExerciseIds, :videoUrl, :isFavorite);
 
 }
 
@@ -135,6 +137,7 @@ UPDATE WorkoutDetail
     exerciseTips = ?,
     variations = ?,
     relatedExerciseIds = ?,
-    videoUrl = ?
+    videoUrl = ?,
+    isFavorite = ?
     WHERE exerciseId = ?;
 

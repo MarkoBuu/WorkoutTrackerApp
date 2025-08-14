@@ -34,4 +34,5 @@ fun workoutDetailEntityMapper(workout: WorkoutDetail) = WorkoutDetailItem(
     variations = workout.variations,
     relatedExerciseIds = workout.relatedExerciseIds,
     videoUrl = workout.videoUrl,
+    isFavorite = workout.isFavorite == 1L
 )

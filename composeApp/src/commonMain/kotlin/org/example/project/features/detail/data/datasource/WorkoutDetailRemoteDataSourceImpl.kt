@@ -15,11 +15,8 @@ class WorkoutDetailRemoteDataSourceImpl(
 
     override suspend fun getWorkoutDetail(exerciseId: String): WorkoutDetailItem?{
         val httpResponse = httpClient.get("${BASE_URL}/exercises/$exerciseId") {
-            url {
-                parameters.append("limit", "30")
-            }
             header("x-rapidapi-key", "27718a3d09msh8b321aa8091d452p1493b2jsn1c52c8a15f6f")
         }
-        return  httpResponse.body<WorkoutDetailApiResponse>().data.firstOrNull()?.toWorkoutDetailItem()
+        return  httpResponse.body<WorkoutDetailApiResponse>().data.toWorkoutDetailItem()
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WorkoutDetailApiResponse (
     @SerialName("data")
-    val data: List<WorkoutDetailApiItem>,
+    val data: WorkoutDetailApiItem,
     @SerialName("success")
     val success: Boolean = false
 )

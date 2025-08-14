@@ -16,4 +16,5 @@ data class WorkoutDetailItem(
     val variations: List<String>,
     val relatedExerciseIds: List<String>,
     val videoUrl: String,
+    val isFavorite: Boolean
 )

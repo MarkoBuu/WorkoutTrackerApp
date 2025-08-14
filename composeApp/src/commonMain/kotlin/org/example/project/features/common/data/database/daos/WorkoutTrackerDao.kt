@@ -11,8 +11,8 @@ import org.example.project.features.common.domain.entities.WorkoutItem
 class WorkoutTrackerDao(
     private val dbHelper: DbHelper
 ) {
-    suspend fun insertWorkout(workoutItem : WorkoutItem){
-        dbHelper.withDatabase {  database ->
+    suspend fun insertWorkout(workoutItem: WorkoutItem) {
+        dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.insertWorkout(
                 workoutItem.exerciseId,
                 workoutItem.name,
@@ -23,13 +23,13 @@ class WorkoutTrackerDao(
                 workoutItem.targetMuscles,
                 workoutItem.secondaryMuscles,
                 workoutItem.keywords,
-                if(workoutItem.isFavorite) 1 else 0
+                if (workoutItem.isFavorite) 1 else 0
             )
         }
     }
 
-    suspend fun insertWorkoutDetail(workoutItem : WorkoutDetailItem){
-        dbHelper.withDatabase {  database ->
+    suspend fun insertWorkoutDetail(workoutItem: WorkoutDetailItem) {
+        dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.insertWorkoutDetail(
                 workoutItem.exerciseId,
                 workoutItem.name,
@@ -45,13 +45,14 @@ class WorkoutTrackerDao(
                 workoutItem.exerciseTips,
                 workoutItem.variations,
                 workoutItem.relatedExerciseIds,
-                workoutItem.videoUrl
+                workoutItem.videoUrl,
+                if (workoutItem.isFavorite) 1 else 0
             )
         }
     }
 
-    suspend fun updateWorkout(workoutItem : WorkoutItem){
-        dbHelper.withDatabase {  database ->
+    suspend fun updateWorkout(workoutItem: WorkoutItem) {
+        dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.updateWorkout(
                 workoutItem.name,
                 workoutItem.imageUrl,
@@ -61,14 +62,14 @@ class WorkoutTrackerDao(
                 workoutItem.targetMuscles,
                 workoutItem.secondaryMuscles,
                 workoutItem.keywords,
-                if(workoutItem.isFavorite) 1 else 0,
+                if (workoutItem.isFavorite) 1 else 0,
                 workoutItem.exerciseId
             )
         }
     }
 
-    suspend fun updateWorkoutDetail(workoutItem : WorkoutDetailItem){
-        dbHelper.withDatabase {  database ->
+    suspend fun updateWorkoutDetail(workoutItem: WorkoutDetailItem) {
+        dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.updateWorkoutDetail(
                 workoutItem.name,
                 workoutItem.imageUrl,
@@ -84,6 +85,7 @@ class WorkoutTrackerDao(
                 workoutItem.variations,
                 workoutItem.relatedExerciseIds,
                 workoutItem.videoUrl,
+                if (workoutItem.isFavorite) 1 else 0,
                 workoutItem.exerciseId
             )
         }
@@ -127,7 +129,7 @@ class WorkoutTrackerDao(
         }
     }
 
-    suspend fun getAllWorkouts() : List<WorkoutItem> {
+    suspend fun getAllWorkouts(): List<WorkoutItem> {
         return dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.selectAllWorkouts().awaitAsList().map {
                 workoutEntityMapper(it)
@@ -135,24 +137,26 @@ class WorkoutTrackerDao(
         }
     }
 
-    suspend fun getWorkoutById(exerciseId: String) : WorkoutItem? {
+    suspend fun getWorkoutById(exerciseId: String): WorkoutItem? {
         return dbHelper.withDatabase { database ->
-            database.workoutTrackerEntityQueries.selectWorkoutById(exerciseId).awaitAsOneOrNull()?.let {
-                workoutEntityMapper(it)
-            }
+            database.workoutTrackerEntityQueries.selectWorkoutById(exerciseId).awaitAsOneOrNull()
+                ?.let {
+                    workoutEntityMapper(it)
+                }
         }
     }
 
-    suspend fun getWorkoutDetailById(exerciseId: String) : WorkoutDetailItem? {
+    suspend fun getWorkoutDetailById(exerciseId: String): WorkoutDetailItem? {
         return dbHelper.withDatabase { database ->
-            database.workoutTrackerEntityQueries.selectWorkoutDetailById(exerciseId).awaitAsOneOrNull()?.let {
-                workoutDetailEntityMapper(it)
-            }
+            database.workoutTrackerEntityQueries.selectWorkoutDetailById(exerciseId)
+                .awaitAsOneOrNull()?.let {
+                    workoutDetailEntityMapper(it)
+                }
         }
     }
 
-    suspend fun deleteWorkoutById(exerciseId: String){
-         dbHelper.withDatabase { database ->
+    suspend fun deleteWorkoutById(exerciseId: String) {
+        dbHelper.withDatabase { database ->
             database.workoutTrackerEntityQueries.deleteWorkoutById(exerciseId)
         }
     }
