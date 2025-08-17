@@ -35,6 +35,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -59,15 +60,26 @@ fun DetailRoute(
 
     val detailUiState = detailViewModel.detailUiState.collectAsState()
 
-    var uriHandler = LocalUriHandler.current
+    val uriHandler = LocalUriHandler.current
     val onWatchVideoClick: (String) -> Unit = { link ->
-        if(link.isNotEmpty()){
+        if (link.isNotEmpty()) {
             uriHandler.openUri(link)
         }
     }
+    val onSaveClick: (WorkoutDetailItem) -> Unit = {
+        detailViewModel.updateIsFavorite(
+            workoutId = it.exerciseId,
+            isAdding = !it.isFavorite
+        )
+    }
+    val updateIsFavUiState = detailViewModel.updateIsFavUiState.collectAsState()
+
     DetailScreen(
-        uiState = detailUiState.value, onBackClick = onBackClick,
-        onWatchVideoClick = onWatchVideoClick
+        uiState = detailUiState.value,
+        onBackClick = onBackClick,
+        onWatchVideoClick = onWatchVideoClick,
+        onSaveClick = onSaveClick,
+        updateIsFavUiState = updateIsFavUiState.value
     )
 }
 
@@ -75,11 +87,17 @@ fun DetailRoute(
 fun DetailScreen(
     onBackClick: () -> Unit,
     uiState: WorkoutDetailUiState,
-    onWatchVideoClick: (String) -> Unit
+    onWatchVideoClick: (String) -> Unit,
+    updateIsFavUiState: WorkoutDetailUpdateIsFavoriteUiState,
+    onSaveClick: (WorkoutDetailItem) -> Unit
 ) {
     Scaffold(
         modifier = Modifier,
-        topBar = { TopAppBar(onBackClick, isFavorite = uiState.workoutDetail?.isFavorite ?: false) }
+        topBar = {
+            TopAppBar(
+                onBackClick = onBackClick
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -97,7 +115,11 @@ fun DetailScreen(
                 }
 
                 uiState.workoutDetail != null -> {
-                    WorkoutDetailContent(uiState.workoutDetail, onWatchVideoClick)
+                    WorkoutDetailContent(
+                        workoutDetail = uiState.workoutDetail,
+                        onWatchVideoClick = onWatchVideoClick,
+                        onSaveClick = onSaveClick
+                    )
                 }
             }
         }
@@ -107,12 +129,31 @@ fun DetailScreen(
 @Composable
 fun WorkoutDetailContent(
     workoutDetail: WorkoutDetailItem,
-    onWatchVideoClick: (String) -> Unit
+    onWatchVideoClick: (String) -> Unit,
+    onSaveClick: (WorkoutDetailItem) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         WorkoutDetailMainContent(workoutDetail, onWatchVideoClick)
+
+        IconButton(
+            onClick = { onSaveClick(workoutDetail) },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+                .size(48.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                    shape = CircleShape
+                )
+        ) {
+            Icon(
+                imageVector = if (workoutDetail.isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 
@@ -316,7 +357,6 @@ fun WatchVideoButton(
 @Composable
 private fun TopAppBar(
     onBackClick: () -> Unit,
-    isFavorite: Boolean
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -333,25 +373,6 @@ private fun TopAppBar(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Localized description"
-                )
-            }
-        },
-        actions = {
-            IconButton(
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp)
-                    .size(30.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.background.copy(
-                            alpha = 0.8f
-                        ),
-                        shape = CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         },

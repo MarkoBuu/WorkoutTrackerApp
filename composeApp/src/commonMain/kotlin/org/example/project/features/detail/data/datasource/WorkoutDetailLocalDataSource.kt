@@ -5,4 +5,8 @@ import org.example.project.features.common.domain.entities.WorkoutDetailItem
 interface WorkoutDetailLocalDataSource {
     suspend fun getWorkoutDetail(exerciseId: String): WorkoutDetailItem?
     suspend fun saveWorkout(workout : WorkoutDetailItem)
+    suspend fun addFavorite(exerciseId: String)
+    suspend fun removeFavorite(exerciseId: String)
+    suspend fun isFavorite(exerciseId: String): Boolean
+
 }

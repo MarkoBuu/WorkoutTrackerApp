@@ -13,7 +13,8 @@ class WorkoutDetailRepositoryImpl(
         return try {
             val workoutDetailCache = workoutDetailLocalDataSource.getWorkoutDetail(exerciseId)
             return if(workoutDetailCache != null){
-                Result.success(workoutDetailCache)
+                val isFav = workoutDetailLocalDataSource.isFavorite(exerciseId = exerciseId)
+                Result.success(workoutDetailCache.copy(isFavorite = isFav))
             } else {
                 val workoutDetailApiResponse = workoutDetailRemoteDataSource.getWorkoutDetail(exerciseId)
                     ?: return Result.failure(Exception("Workout not found"))
@@ -23,5 +24,13 @@ class WorkoutDetailRepositoryImpl(
         } catch (e: Exception){
             Result.failure(e)
         }
+    }
+
+    override suspend fun addFavorite(exerciseId: String) {
+        workoutDetailLocalDataSource.addFavorite(exerciseId)
+    }
+
+    override suspend fun removeFavorite(exerciseId: String) {
+        workoutDetailLocalDataSource.removeFavorite(exerciseId)
     }
 }

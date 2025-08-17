@@ -14,6 +14,7 @@ actual class DatabaseFactory {
                 js("""new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url)""")
             )
         )
+        driver.execute(null, "PRAGMA foreign_keys=ON", 0)
         WokroutTrackerAppDb.Schema.awaitCreate(driver)
         return driver
     }

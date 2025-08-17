@@ -24,25 +24,7 @@ class FeedViewModel(
         }
     }
 
-
-    private val _apiTestResult = mutableStateOf("Ready to test")
-    val apiTestResult: State<String> = _apiTestResult
-
-    fun testApiConnection() = viewModelScope.launch {
-        _apiTestResult.value = "Testing..."
-        _apiTestResult.value = feedRepository.getWorkoutList()
-            .fold(
-                onSuccess = { items ->
-                    if (items.isEmpty()) "Empty response"
-                    else "Success! Found ${items.size} items"
-                },
-                onFailure = { e ->
-                    "API Error: ${e.message ?: "Unknown error"}"
-                }
-            )
-    }
-
-    suspend fun getWorkoutList(){
+    private suspend fun getWorkoutList(){
         val workoutList = feedRepository.getWorkoutList()
         if(workoutList.isSuccess){
             _feedUiState.value = _feedUiState.value.copy(

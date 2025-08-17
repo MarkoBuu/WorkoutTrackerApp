@@ -114,7 +114,7 @@ fun TabsScreen(
             exercisesNavGraph(navigateToDetail = navigateToDetail){
 
             }
-            favoritesNavGraph()
+            favoritesNavGraph(navigateToDetail = navigateToDetail)
             profileNavGraph()
         }
     }

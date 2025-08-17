@@ -144,7 +144,7 @@ private fun TopAppBar(){
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
-        Text(text = "Hi Marko!", color = MaterialTheme.colorScheme.primaryContainer,
+        Text(text = "Hi Marko!", color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleMedium)
     }
 }
