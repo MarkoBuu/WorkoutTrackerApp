@@ -16,9 +16,13 @@ import org.example.project.features.feed.data.datasources.FeedRemoteDataSource
 import org.example.project.features.feed.data.datasources.FeedRemoteDataSourceImpl
 import org.example.project.features.feed.data.repositories.FeedRepositoryImpl
 import org.example.project.features.feed.domain.repositories.FeedRepository
+import org.example.project.preferences.AppPreferences
+import org.example.project.preferences.AppPreferencesImpl
 import org.koin.dsl.module
 
 fun dataModule() = module {
+
+    single<AppPreferences> { AppPreferencesImpl(get()) }
     single<FeedLocalDataSource> { FeedLocalDataSourceImpl(get()) }
     single<FeedRemoteDataSource> { FeedRemoteDataSourceImpl(get()) }
 

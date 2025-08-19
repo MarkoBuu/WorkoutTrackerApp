@@ -23,7 +23,7 @@ fun ErrorContent(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            "Error while loading workouts",
+            "Error while loading",
             style = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.error
             )

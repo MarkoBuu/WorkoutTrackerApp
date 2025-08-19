@@ -4,21 +4,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -28,6 +35,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +44,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import org.example.project.features.common.domain.entities.WorkoutDetailItem
 import org.example.project.features.components.ErrorContent
 import org.example.project.features.components.Loader
@@ -127,7 +139,7 @@ fun FavoriteExerciseCard(
     navigateToDetail: (String) -> Unit
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         modifier = modifier
             .background(MaterialTheme.colorScheme.onPrimary, shape = RoundedCornerShape(12.dp))
             .border
@@ -139,53 +151,68 @@ fun FavoriteExerciseCard(
             .clickable {
                 navigateToDetail(workout.exerciseId)
             }
+            .height(160.dp)
     ) {
         AsyncImage(
-            model = workout.imageUrl,
-            onError = { println("onError=${it.result.throwable}") },
-            contentScale = ContentScale.Crop,
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .data(workout.imageUrl)
+                .crossfade(true)
+                .build(),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = imageModifier
         )
 
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Text(
-                textAlign = TextAlign.Left,
                 text = workout.name,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Medium
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+                shape = CircleShape
+            ) {
+                Text(
+                    text = workout.exerciseType,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-            )
-            Text(
-                textAlign = TextAlign.Left,
-                text = workout.exerciseType,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-            )
+            }
 
-            Text(
-                textAlign = TextAlign.Left,
-                text = workout.equipments.joinToString(", "),
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-            )
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+                shape = CircleShape
+            ) {
+                Text(
+                    text = workout.equipments.joinToString(", "),
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
 
-            Text(
-                textAlign = TextAlign.Left,
-                text = workout.bodyParts.joinToString(", "),
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-            )
-
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+                shape = CircleShape
+            ) {
+                Text(
+                    text = workout.bodyParts.joinToString(", "),
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
     }
 }
@@ -206,6 +233,10 @@ private fun TopAppBar(
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.background
-        )
+        ),
+        windowInsets = WindowInsets(
+            top = 0,
+            bottom = 0
+        ),
     )
 }

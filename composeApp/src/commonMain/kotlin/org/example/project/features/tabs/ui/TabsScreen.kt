@@ -37,19 +37,28 @@ val tabItems = listOf(
 @Composable
 fun TabsRoute(
     navigateToDetail: (String) -> Unit,
-    tabNavController: NavHostController
+    tabNavController: NavHostController,
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
+    onLogout: () -> Unit
 
 ) {
     TabsScreen(
         tabNavController = tabNavController,
-        navigateToDetail = navigateToDetail
+        navigateToDetail = navigateToDetail,
+        isUserLoggedIn = isUserLoggedIn,
+        openLoginBottomSheet = openLoginBottomSheet,
+        onLogout = onLogout
     )
 }
 
 @Composable
 fun TabsScreen(
     navigateToDetail: (String) -> Unit,
-    tabNavController: NavHostController
+    tabNavController: NavHostController,
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
+    onLogout: () -> Unit
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -108,14 +117,19 @@ fun TabsScreen(
             startDestination = Screen.Home.route,
             Modifier.padding(innerPadding)
         ) {
-            feedNavGraph {
-
-            }
+            feedNavGraph(
+                isUserLoggedIn = isUserLoggedIn,
+                openLoginBottomSheet = openLoginBottomSheet
+            ) {}
             exercisesNavGraph(navigateToDetail = navigateToDetail){
 
             }
             favoritesNavGraph(navigateToDetail = navigateToDetail)
-            profileNavGraph()
+            profileNavGraph(
+                isUserLoggedIn = isUserLoggedIn,
+                openLoginBottomSheet = openLoginBottomSheet,
+                onLogout = onLogout
+            )
         }
     }
 }

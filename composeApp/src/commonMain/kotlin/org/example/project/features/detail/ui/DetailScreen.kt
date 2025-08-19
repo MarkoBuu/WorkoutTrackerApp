@@ -1,5 +1,6 @@
 package org.example.project.features.detail.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,12 +31,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +59,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun DetailRoute(
     exerciseId: String,
     onBackClick: () -> Unit,
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
     detailViewModel: WorkoutDetailViewModel = koinViewModel()
 ) {
     LaunchedEffect(Unit) {
@@ -66,14 +75,81 @@ fun DetailRoute(
             uriHandler.openUri(link)
         }
     }
-    val onSaveClick: (WorkoutDetailItem) -> Unit = {
-        detailViewModel.updateIsFavorite(
-            workoutId = it.exerciseId,
-            isAdding = !it.isFavorite
-        )
+    var showAlertDialog by remember {
+        mutableStateOf(false)
     }
+
+    val onSaveClick: (WorkoutDetailItem) -> Unit = {
+        if (!isUserLoggedIn()) {
+            showAlertDialog = true
+        } else
+            detailViewModel.updateIsFavorite(
+                workoutId = it.exerciseId,
+                isAdding = !it.isFavorite
+            )
+    }
+
     val updateIsFavUiState = detailViewModel.updateIsFavUiState.collectAsState()
 
+    if (showAlertDialog) {
+        AlertDialog(
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = {
+                showAlertDialog = false
+            },
+            title = {
+                Text(
+                    text = "Update Favorites",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
+            },
+            text = {
+                Text(
+                    text = "Login to Add/Remove Favorites",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = {
+                        showAlertDialog = false
+                        openLoginBottomSheet {
+                            detailUiState.value.workoutDetail?.let {
+                                detailViewModel.updateIsFavorite(
+                                    workoutId = it.exerciseId,
+                                    isAdding = !it.isFavorite
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    Text("Log In")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.background
+
+                    ),
+                    onClick = {
+                        showAlertDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
     DetailScreen(
         uiState = detailUiState.value,
         onBackClick = onBackClick,
@@ -138,7 +214,9 @@ fun WorkoutDetailContent(
         WorkoutDetailMainContent(workoutDetail, onWatchVideoClick)
 
         IconButton(
-            onClick = { onSaveClick(workoutDetail) },
+            onClick = {
+                onSaveClick(workoutDetail)
+            },
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
@@ -185,6 +263,7 @@ fun WorkoutDetailMainContent(
                         )
                 )
             }
+
             item {
                 WorkoutDetailsHeader(workoutDetail)
             }

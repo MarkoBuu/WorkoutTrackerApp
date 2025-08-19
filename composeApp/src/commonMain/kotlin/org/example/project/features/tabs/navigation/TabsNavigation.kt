@@ -14,12 +14,18 @@ fun NavController.navigateToTabs(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.tabsNavGraph(
     navigateToDetail: (String) -> Unit,
-    tabNavController: NavHostController
+    tabNavController: NavHostController,
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
+    onLogout: () -> Unit
 ) {
     composable(Screen.Tabs.route) {
         TabsRoute(
             tabNavController = tabNavController,
-            navigateToDetail = navigateToDetail
+            navigateToDetail = navigateToDetail,
+            isUserLoggedIn = isUserLoggedIn,
+            openLoginBottomSheet = openLoginBottomSheet,
+            onLogout = onLogout
         )
     }
 }

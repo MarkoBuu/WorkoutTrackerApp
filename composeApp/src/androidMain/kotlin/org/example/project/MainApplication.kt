@@ -3,6 +3,7 @@ package org.example.project
 import android.app.Application
 import org.example.project.dbFactory.DatabaseFactory
 import org.example.project.di.initKoin
+import org.example.project.preferences.MultiplatformSettingsFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -10,6 +11,7 @@ class MainApplication : Application() {
 
     private val androidModules = module {
         single { DatabaseFactory(applicationContext) }
+        single { MultiplatformSettingsFactory(applicationContext) }
     }
 
     override fun onCreate() {

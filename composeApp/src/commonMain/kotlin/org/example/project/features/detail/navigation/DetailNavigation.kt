@@ -13,14 +13,20 @@ import org.example.project.features.detail.ui.DetailRoute
 const val WORKOUT_ID_ARG = "exerciseId"
 
 fun NavController.navigateToDetail(exerciseId: String, navOptions: NavOptions? = null) {
-    navigate(Screen.Detail.route.replace(
-        "$WORKOUT_ID_ARG={$WORKOUT_ID_ARG}", "$WORKOUT_ID_ARG=$exerciseId"))
+    navigate(
+        Screen.Detail.route.replace(
+            "$WORKOUT_ID_ARG={$WORKOUT_ID_ARG}", "$WORKOUT_ID_ARG=$exerciseId"
+        )
+    )
 }
 
 fun NavGraphBuilder.detailNavGraph(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
 ) {
-    composable(Screen.Detail.route,
+    composable(
+        Screen.Detail.route,
         arguments = listOf(
             navArgument(WORKOUT_ID_ARG) {
                 type = NavType.StringType
@@ -30,6 +36,8 @@ fun NavGraphBuilder.detailNavGraph(
         val exerciseId = it.arguments?.read { getString(WORKOUT_ID_ARG) } ?: ""
         DetailRoute(
             exerciseId = exerciseId,
+            isUserLoggedIn = isUserLoggedIn,
+            openLoginBottomSheet = openLoginBottomSheet,
             onBackClick = onBackClick
         )
     }
