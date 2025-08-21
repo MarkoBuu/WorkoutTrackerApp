@@ -47,9 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import org.example.project.features.common.domain.entities.WorkoutItem
 import org.example.project.features.components.ErrorContent
 import org.example.project.features.components.Loader
@@ -68,7 +65,8 @@ fun ExercisesRoute(
     ExercisesScreen(
         feedUiState = feedUiState.value,
         navigateToSearch = navigateToSearch,
-        navigateToDetail = navigateToDetail
+        navigateToDetail = navigateToDetail,
+        feedViewModel = feedViewModel
     )
 }
 
@@ -77,6 +75,7 @@ fun ExercisesScreen(
     navigateToDetail: (String) -> Unit,
     feedUiState: FeedUiState,
     navigateToSearch: () -> Unit,
+    feedViewModel: FeedViewModel
 ) {
     val workouts = feedUiState.workoutsList
 
@@ -90,9 +89,13 @@ fun ExercisesScreen(
             feedUiState.isLoading -> {
                 Loader()
             }
+
             feedUiState.isError != null -> {
-                ErrorContent()
+                ErrorContent(onClick = {
+                    feedViewModel.getWorkoutList()
+                })
             }
+
             workouts != null -> {
                 ExerciseContent(
                     innerPadding = innerPadding,
@@ -129,20 +132,21 @@ fun ExerciseContent(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 16.dp))
-                {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Search exercises...",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Search exercises...",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
 
         LazyVerticalGrid(
@@ -235,12 +239,9 @@ fun ExerciseCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(workout.imageUrl)
-                    .crossfade(true)
-                    .build(),
+                model = workout.imageUrl,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
             )
 

@@ -31,11 +31,17 @@ fun AppNavHost(
             navigateToDetail = {
                 appState.navigateToDetail(it)
             },
+            navigateToSearch = appState::navigateToSearch,
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
             onLogout = onLogout
         )
-        searchNavGraph()
+        searchNavGraph(
+            navigateToDetail = {
+                appState.navigateToDetail(it)
+            },
+            onBackPress = appState::navigateBack
+        )
         detailNavGraph(
             onBackClick = appState::navigateBack,
             isUserLoggedIn = isUserLoggedIn,

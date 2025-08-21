@@ -141,3 +141,8 @@ UPDATE WorkoutDetail
     isFavorite = ?
     WHERE exerciseId = ?;
 
+searchWorkoutByText:
+SELECT * FROM Workout WHERE name LIKE ("%" || :query || "%")
+ OR exerciseType LIKE ("%" || :query || "%")
+ OR targetMuscles LIKE ("%" || :query || "%")
+ OR keywords LIKE ("%" || :query || "%");

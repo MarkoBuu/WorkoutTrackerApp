@@ -30,7 +30,7 @@ class ProfileViewModel : ViewModel() {
         initialValue = ProfileScreenUiState()
     )
 
-    private fun getUserInfo(): Flow<ProfileScreenUiState> = flow {
+    fun getUserInfo(): Flow<ProfileScreenUiState> = flow {
         emit(
             ProfileScreenUiState(
                 isLoading = true

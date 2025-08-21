@@ -12,10 +12,13 @@ fun NavController.navigateToSearch(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.searchNavGraph(
+    navigateToDetail: (String) -> Unit,
+    onBackPress: () -> Unit
 ) {
     composable(Screen.Search.route) {
         SearchRoute(
-
+            navigateToDetail = navigateToDetail,
+            onBackPress = onBackPress
         )
     }
 }

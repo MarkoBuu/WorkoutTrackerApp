@@ -16,6 +16,10 @@ import org.example.project.features.feed.data.datasources.FeedRemoteDataSource
 import org.example.project.features.feed.data.datasources.FeedRemoteDataSourceImpl
 import org.example.project.features.feed.data.repositories.FeedRepositoryImpl
 import org.example.project.features.feed.domain.repositories.FeedRepository
+import org.example.project.features.search.data.datasources.SearchWorkoutLocalDataSource
+import org.example.project.features.search.data.datasources.SearchWorkoutLocalDataSourceImpl
+import org.example.project.features.search.data.datasources.SearchWorkoutRepositoryImpl
+import org.example.project.features.search.domain.repo.SearchWorkoutRepository
 import org.example.project.preferences.AppPreferences
 import org.example.project.preferences.AppPreferencesImpl
 import org.koin.dsl.module
@@ -35,5 +39,8 @@ fun dataModule() = module {
     single<FeedRepository> { FeedRepositoryImpl(get(), get()) }
     single<WorkoutDetailRepository> { WorkoutDetailRepositoryImpl(get(), get()) }
     single<FavoriteWorkoutRepository> { FavoriteWorkoutRepositoryImpl(get()) }
+
+    single<SearchWorkoutLocalDataSource> { SearchWorkoutLocalDataSourceImpl(get()) }
+    single<SearchWorkoutRepository> { SearchWorkoutRepositoryImpl(get()) }
 
 }

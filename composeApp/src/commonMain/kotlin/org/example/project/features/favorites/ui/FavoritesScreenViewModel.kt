@@ -22,19 +22,25 @@ class FavoritesScreenViewModel(
         }
     }
 
-    suspend fun getWorkoutList(){
-        val workoutList = favoriteWorkoutRepository.getAllFavoriteWorkouts()
-        if(workoutList.isSuccess){
-            _favoritesScreenUiState.value = _favoritesScreenUiState.value.copy(
-                favoriteWorkoutsList = workoutList.getOrDefault(emptyList()),
-                isLoading = false,
-            )
-        } else {
-            _favoritesScreenUiState.update {
-                it.copy(
-                    isError = workoutList.exceptionOrNull()?.message,
-                    isLoading = false,
-                )
+    fun getWorkoutList() {
+        _favoritesScreenUiState.update { it.copy(isLoading = true, isError = null) }
+
+        viewModelScope.launch {
+            val workoutList = favoriteWorkoutRepository.getAllFavoriteWorkouts()
+            if(workoutList.isSuccess){
+                _favoritesScreenUiState.update {
+                    it.copy(
+                        favoriteWorkoutsList = workoutList.getOrDefault(emptyList()),
+                        isLoading = false,
+                    )
+                }
+            } else {
+                _favoritesScreenUiState.update {
+                    it.copy(
+                        isError = workoutList.exceptionOrNull()?.message,
+                        isLoading = false,
+                    )
+                }
             }
         }
     }

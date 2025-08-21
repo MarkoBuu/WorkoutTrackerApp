@@ -37,6 +37,7 @@ val tabItems = listOf(
 @Composable
 fun TabsRoute(
     navigateToDetail: (String) -> Unit,
+    navigateToSearch: () -> Unit,
     tabNavController: NavHostController,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
@@ -46,6 +47,7 @@ fun TabsRoute(
     TabsScreen(
         tabNavController = tabNavController,
         navigateToDetail = navigateToDetail,
+        navigateToSearch = navigateToSearch,
         isUserLoggedIn = isUserLoggedIn,
         openLoginBottomSheet = openLoginBottomSheet,
         onLogout = onLogout
@@ -55,6 +57,7 @@ fun TabsRoute(
 @Composable
 fun TabsScreen(
     navigateToDetail: (String) -> Unit,
+    navigateToSearch: () -> Unit,
     tabNavController: NavHostController,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
@@ -121,9 +124,10 @@ fun TabsScreen(
                 isUserLoggedIn = isUserLoggedIn,
                 openLoginBottomSheet = openLoginBottomSheet
             ) {}
-            exercisesNavGraph(navigateToDetail = navigateToDetail){
-
-            }
+            exercisesNavGraph(
+                navigateToDetail = navigateToDetail,
+                navigateToSearch = navigateToSearch
+            )
             favoritesNavGraph(navigateToDetail = navigateToDetail)
             profileNavGraph(
                 isUserLoggedIn = isUserLoggedIn,

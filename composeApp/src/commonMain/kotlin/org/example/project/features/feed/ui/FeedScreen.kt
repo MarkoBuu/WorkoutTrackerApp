@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,7 +50,8 @@ fun FeedRoute(
 
     FeedScreen(
         feedUiState = feedUiState.value,
-        navigateToSearch = navigateToSearch
+        navigateToSearch = navigateToSearch,
+        feedViewModel = feedViewModel
     )
 }
 
@@ -57,6 +59,7 @@ fun FeedRoute(
 fun FeedScreen(
     feedUiState: FeedUiState,
     navigateToSearch: () -> Unit,
+    feedViewModel: FeedViewModel
 ) {
     val workouts = feedUiState.workoutsList
     Scaffold(
@@ -65,13 +68,23 @@ fun FeedScreen(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
+            HorizontalDivider(
+                thickness = 0.3.dp,
+                color = MaterialTheme.colorScheme.outline.copy(
+                    alpha = 0.5f
+                )
+            )
             when {
                 feedUiState.isLoading -> {
                     Loader()
                 }
 
                 feedUiState.isError != null -> {
-                    ErrorContent()
+                    ErrorContent(
+                        {
+                            feedViewModel.getWorkoutList()
+                        }
+                    )
                 }
 
                 workouts != null -> {
@@ -125,9 +138,10 @@ private fun AppBar() {
     TopAppBar(
         title = {
             Text(
-                text = "Hi Marko!",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
+                "WorkoutTracker",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
             )
         },

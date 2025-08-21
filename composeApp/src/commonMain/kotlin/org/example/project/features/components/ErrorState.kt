@@ -9,13 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import org.example.project.features.feed.ui.FeedViewModel
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ErrorContent(
+    onClick: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -30,7 +27,7 @@ fun ErrorContent(
         )
 
         Button(
-            onClick = {}
+            onClick = {onClick()}
         ){
             Text("Retry")
         }

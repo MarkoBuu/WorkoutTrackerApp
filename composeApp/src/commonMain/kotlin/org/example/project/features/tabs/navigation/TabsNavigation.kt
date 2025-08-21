@@ -14,6 +14,7 @@ fun NavController.navigateToTabs(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.tabsNavGraph(
     navigateToDetail: (String) -> Unit,
+    navigateToSearch: () -> Unit,
     tabNavController: NavHostController,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
@@ -23,6 +24,7 @@ fun NavGraphBuilder.tabsNavGraph(
         TabsRoute(
             tabNavController = tabNavController,
             navigateToDetail = navigateToDetail,
+            navigateToSearch = navigateToSearch,
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
             onLogout = onLogout

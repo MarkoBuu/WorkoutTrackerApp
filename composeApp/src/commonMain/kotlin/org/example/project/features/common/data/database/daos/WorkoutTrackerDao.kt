@@ -161,4 +161,11 @@ class WorkoutTrackerDao(
         }
     }
 
+    suspend fun searchWorkoutByText(text: String): List<WorkoutItem> {
+        return dbHelper.withDatabase { database ->
+            database.workoutTrackerEntityQueries.searchWorkoutByText(text).awaitAsList().map {
+                workoutEntityMapper(it)
+            }
+        }
+    }
 }

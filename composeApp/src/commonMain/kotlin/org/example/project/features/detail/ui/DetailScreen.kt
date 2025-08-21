@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -155,7 +156,9 @@ fun DetailRoute(
         onBackClick = onBackClick,
         onWatchVideoClick = onWatchVideoClick,
         onSaveClick = onSaveClick,
-        updateIsFavUiState = updateIsFavUiState.value
+        updateIsFavUiState = updateIsFavUiState.value,
+        detailViewModel = detailViewModel,
+        exerciseId = exerciseId
     )
 }
 
@@ -165,8 +168,11 @@ fun DetailScreen(
     uiState: WorkoutDetailUiState,
     onWatchVideoClick: (String) -> Unit,
     updateIsFavUiState: WorkoutDetailUpdateIsFavoriteUiState,
-    onSaveClick: (WorkoutDetailItem) -> Unit
-) {
+    onSaveClick: (WorkoutDetailItem) -> Unit,
+    detailViewModel: WorkoutDetailViewModel,
+    exerciseId: String,
+
+    ) {
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -187,7 +193,11 @@ fun DetailScreen(
                 }
 
                 uiState.isError != null -> {
-                    ErrorContent()
+                    ErrorContent(
+                        onClick = {
+                            detailViewModel.getWorkoutDetail(exerciseId)
+                        }
+                    )
                 }
 
                 uiState.workoutDetail != null -> {
@@ -252,8 +262,8 @@ fun WorkoutDetailMainContent(
                 AsyncImage(
                     model = workoutDetail.imageUrl,
                     contentDescription = workoutDetail.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth()
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxWidth().height(200.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .border
                             (

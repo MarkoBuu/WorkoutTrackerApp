@@ -1,11 +1,8 @@
 package org.example.project.features.feed.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,19 +21,25 @@ class FeedViewModel(
         }
     }
 
-    private suspend fun getWorkoutList(){
-        val workoutList = feedRepository.getWorkoutList()
-        if(workoutList.isSuccess){
-            _feedUiState.value = _feedUiState.value.copy(
-                workoutsList = workoutList.getOrDefault(emptyList()),
-                isLoading = false,
-            )
-        } else {
-            _feedUiState.update {
-                it.copy(
-                    isError = workoutList.exceptionOrNull()?.message,
-                    isLoading = false,
-                )
+    fun getWorkoutList(){
+        _feedUiState.update { it.copy(isLoading = true, isError = null) }
+        viewModelScope.launch {
+            val workoutList = feedRepository.getWorkoutList()
+            if(workoutList.isSuccess){
+                _feedUiState.update {
+                    it.copy(
+                        workoutsList = workoutList.getOrDefault(emptyList()),
+                        isLoading = false,
+                        isError = null
+                    )
+                }
+            } else {
+                _feedUiState.update {
+                    it.copy(
+                        isError = workoutList.exceptionOrNull()?.message,
+                        isLoading = false
+                    )
+                }
             }
         }
     }

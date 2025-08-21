@@ -64,7 +64,8 @@ fun ProfileRoute(
         },
         onLogout = {
             onLogout()
-        }
+        },
+        profileViewModel = profileViewModel
     )
 }
 
@@ -75,6 +76,7 @@ fun ProfileScreen(
     onEditProfile: () -> Unit,
     onLogin: () -> Unit,
     onLogout: () -> Unit,
+    profileViewModel: ProfileViewModel
 ) {
 
     Scaffold(
@@ -104,7 +106,9 @@ fun ProfileScreen(
                 }
 
                 profileUiState.error != null -> {
-                    ErrorContent()
+                    ErrorContent({
+                        profileViewModel.getUserInfo()
+                    })
                 }
 
                 profileUiState.userInfo != null && isUserLoggedIn() -> {
