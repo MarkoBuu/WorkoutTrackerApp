@@ -41,16 +41,20 @@ fun TabsRoute(
     tabNavController: NavHostController,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
-    onLogout: () -> Unit
+    openSignUpBottomSheet: (() -> Unit) -> Unit, // Add this
+    onLogout: () -> Unit,
+    navigateToWorkout: () -> Unit
 
-) {
+    ) {
     TabsScreen(
         tabNavController = tabNavController,
         navigateToDetail = navigateToDetail,
         navigateToSearch = navigateToSearch,
         isUserLoggedIn = isUserLoggedIn,
         openLoginBottomSheet = openLoginBottomSheet,
-        onLogout = onLogout
+        onLogout = onLogout,
+        navigateToWorkout = navigateToWorkout,
+        openSignUpBottomSheet = openSignUpBottomSheet
     )
 }
 
@@ -61,8 +65,10 @@ fun TabsScreen(
     tabNavController: NavHostController,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
-    onLogout: () -> Unit
-) {
+    openSignUpBottomSheet: (() -> Unit) -> Unit, // Add this
+    onLogout: () -> Unit,
+    navigateToWorkout: () -> Unit
+    ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -121,9 +127,8 @@ fun TabsScreen(
             Modifier.padding(innerPadding)
         ) {
             feedNavGraph(
-                isUserLoggedIn = isUserLoggedIn,
-                openLoginBottomSheet = openLoginBottomSheet
-            ) {}
+                navigateToWorkout = navigateToWorkout
+            )
             exercisesNavGraph(
                 navigateToDetail = navigateToDetail,
                 navigateToSearch = navigateToSearch
@@ -132,6 +137,7 @@ fun TabsScreen(
             profileNavGraph(
                 isUserLoggedIn = isUserLoggedIn,
                 openLoginBottomSheet = openLoginBottomSheet,
+                openSignUpBottomSheet = openSignUpBottomSheet,
                 onLogout = onLogout
             )
         }

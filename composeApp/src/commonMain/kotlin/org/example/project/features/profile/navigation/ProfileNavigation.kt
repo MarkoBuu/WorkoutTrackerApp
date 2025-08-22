@@ -14,12 +14,14 @@ fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.profileNavGraph(
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
+    openSignUpBottomSheet: (() -> Unit) -> Unit, // Add this
     onLogout: () -> Unit
 ) {
     composable(Screen.Profile.route) {
         ProfileRoute(
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
+            openSignUpBottomSheet = openSignUpBottomSheet,
             onLogout = onLogout
         )
     }

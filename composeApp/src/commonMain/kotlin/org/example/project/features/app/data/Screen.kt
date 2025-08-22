@@ -19,6 +19,7 @@ import workouttracker.composeapp.generated.resources.profile_selected
 import workouttracker.composeapp.generated.resources.profile_unselected
 import workouttracker.composeapp.generated.resources.search
 import workouttracker.composeapp.generated.resources.tabs
+import workouttracker.composeapp.generated.resources.workouts
 
 sealed class Screen(
     val route: String,
@@ -29,6 +30,7 @@ sealed class Screen(
     data object Search : Screen("search", Res.string.search)
     data object Tabs : Screen("tabs", Res.string.tabs)
     data object Detail : Screen("detail?$WORKOUT_ID_ARG={$WORKOUT_ID_ARG}", Res.string.details)
+    data object Workouts : Screen("workouts", Res.string.workouts)
 
 
     data object Home : Screen("home",

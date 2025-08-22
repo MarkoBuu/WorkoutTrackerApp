@@ -14,47 +14,68 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.example.project.features.login.auth.AuthService
 import org.example.project.features.profile.data.User
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(
+    private val authService: AuthService
+) : ViewModel() {
 
     private var _refresh = MutableStateFlow(false)
     private val refresh = _refresh.asStateFlow()
 
+    val currentUser: StateFlow<User?> = authService.currentUser
+        .stateIn(
+            viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    val profileUiState: StateFlow<ProfileScreenUiState> = combine(refresh) { _ ->
-        getUserInfo()
-    }.flatMapLatest { it }.stateIn(
-        viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ProfileScreenUiState()
-    )
-
-    fun getUserInfo(): Flow<ProfileScreenUiState> = flow {
-        emit(
-            ProfileScreenUiState(
-                isLoading = true
-            )
+    val profileUiState: StateFlow<ProfileScreenUiState> =
+        combine(refresh, currentUser) { refreshFlag, user ->
+            getUserInfo(user)
+        }.flatMapLatest { it }.stateIn(
+            viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ProfileScreenUiState()
         )
 
-        delay(1000)
+    fun getUserInfo(user: User?): Flow<ProfileScreenUiState> = flow {
+        emit(ProfileScreenUiState(isLoading = true))
 
-        emit(
-            ProfileScreenUiState(
-                userInfo = User(
-                    id = 1,
-                    name = "Marko",
-                    email = "marko.budak33@gmail.com",
-                    myWorkoutsCount = 10,
-                    favoriteWorkoutCount = 10,
-                    followers = 200,
-                ),
-                isLoading = false
+        try {
+            delay(1000) // Simulate loading
+
+            emit(
+                ProfileScreenUiState(
+                    userInfo = user, // Can be null
+                    isLoggedIn = user != null && !user.isAnonymous,
+                    isLoading = false
+                )
             )
-        )
+        } catch (e: Exception) {
+            emit(
+                ProfileScreenUiState(
+                    isLoading = false,
+                    error = "Failed to load profile information"
+                )
+            )
+        }
     }
 
     fun refresh() {
         _refresh.value = true
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            try {
+                authService.signOut()
+                refresh()
+            } catch (e: Exception) {
+                // Handle error if needed
+            }
+        }
     }
 }

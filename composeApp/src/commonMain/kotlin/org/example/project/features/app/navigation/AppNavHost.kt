@@ -9,6 +9,7 @@ import org.example.project.features.app.data.Screen
 import org.example.project.features.detail.navigation.detailNavGraph
 import org.example.project.features.search.navigation.searchNavGraph
 import org.example.project.features.tabs.navigation.tabsNavGraph
+import org.example.project.features.workouts.navigation.workoutNavGraph
 
 @Composable
 fun AppNavHost(
@@ -17,6 +18,7 @@ fun AppNavHost(
     startDestination: String = Screen.Tabs.route,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
+    openSignUpBottomSheet: (() -> Unit) -> Unit, // Add this
     onLogout: () -> Unit
 ) {
     val navController = appState.navController
@@ -34,7 +36,9 @@ fun AppNavHost(
             navigateToSearch = appState::navigateToSearch,
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
-            onLogout = onLogout
+            onLogout = onLogout,
+            navigateToWorkout = appState::navigateToWorkout,
+            openSignUpBottomSheet = openSignUpBottomSheet
         )
         searchNavGraph(
             navigateToDetail = {
@@ -46,6 +50,9 @@ fun AppNavHost(
             onBackClick = appState::navigateBack,
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
+        )
+        workoutNavGraph(
+
         )
     }
 }

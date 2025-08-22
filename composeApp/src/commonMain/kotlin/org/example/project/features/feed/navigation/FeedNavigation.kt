@@ -12,14 +12,11 @@ fun NavController.navigateToFeed(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.feedNavGraph(
-    isUserLoggedIn: () -> Boolean,
-    openLoginBottomSheet: (() -> Unit) -> Unit,
-    navigateToSearch: () -> Unit
+    navigateToWorkout: () -> Unit,
 ) {
     composable(Screen.Home.route) {
         FeedRoute(
-            navigateToSearch = navigateToSearch
-
+            navigateToWorkout = navigateToWorkout
         )
     }
 }

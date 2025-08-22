@@ -6,6 +6,5 @@ data class ProfileScreenUiState(
     val userInfo: User? = null,
     val isLoggedIn: Boolean = false,
     val isLoading: Boolean = false,
-    val error: String? = null,
-
-    )
+    val error: String? = null
+)

@@ -1,8 +1,9 @@
 package org.example.project.features.login.ui
 
-sealed class LoginState {
-    object Idle : LoginState()
-    object Loading : LoginState()
-    object Success : LoginState()
-    data class Error(val message: String) : LoginState()
-}
+data class LoginUiState (
+    val email: String = "",
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+
+)

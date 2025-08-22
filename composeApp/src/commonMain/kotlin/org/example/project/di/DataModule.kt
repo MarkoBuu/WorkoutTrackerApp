@@ -1,5 +1,7 @@
 package org.example.project.di
 
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import org.example.project.features.detail.data.datasource.WorkoutDetailLocalDataSource
 import org.example.project.features.detail.data.datasource.WorkoutDetailLocalDataSourceImpl
 import org.example.project.features.detail.data.datasource.WorkoutDetailRemoteDataSource
@@ -16,6 +18,8 @@ import org.example.project.features.feed.data.datasources.FeedRemoteDataSource
 import org.example.project.features.feed.data.datasources.FeedRemoteDataSourceImpl
 import org.example.project.features.feed.data.repositories.FeedRepositoryImpl
 import org.example.project.features.feed.domain.repositories.FeedRepository
+import org.example.project.features.login.auth.AuthService
+import org.example.project.features.login.auth.AuthServiceImpl
 import org.example.project.features.search.data.datasources.SearchWorkoutLocalDataSource
 import org.example.project.features.search.data.datasources.SearchWorkoutLocalDataSourceImpl
 import org.example.project.features.search.data.datasources.SearchWorkoutRepositoryImpl
@@ -42,5 +46,9 @@ fun dataModule() = module {
 
     single<SearchWorkoutLocalDataSource> { SearchWorkoutLocalDataSourceImpl(get()) }
     single<SearchWorkoutRepository> { SearchWorkoutRepositoryImpl(get()) }
+
+    single { Firebase.auth }
+
+    single<AuthService> { AuthServiceImpl(get()) }
 
 }

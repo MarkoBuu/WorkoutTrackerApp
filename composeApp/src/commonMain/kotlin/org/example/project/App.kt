@@ -8,21 +8,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import org.example.project.features.app.data.rememberAppState
 import org.example.project.features.app.navigation.AppNavHost
 import org.example.project.features.designSystem.theme.WorkoutTrackerAppCmpTheme
+import org.example.project.features.login.auth.AuthServiceImpl
 import org.example.project.features.login.ui.LoginScreenBottomSheet
 import org.example.project.features.login.ui.LoginViewModel
+import org.example.project.features.login.ui.SignUpBottomSheet
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
 fun App(
-    loginViewModel: LoginViewModel = koinViewModel()
+
 ) {
+    val loginViewModel = LoginViewModel(AuthServiceImpl(auth = Firebase.auth))
+
     WorkoutTrackerAppCmpTheme {
         val navController = rememberNavController()
         val appState = rememberAppState(
@@ -52,32 +56,52 @@ fun App(
         val onLoginSuccess: () -> Unit = {
             showLoginBottomSheet = false
             appState.updateIsLoggedIn(true)
-            loginViewModel.resetState()
             loginCallback()
         }
 
         val onLogout: () -> Unit = {
             appState.onLogout()
-            loginViewModel.resetState()
         }
 
         val onCloseSheet: () -> Unit = {
             showLoginBottomSheet = false
-            loginViewModel.resetState()
+        }
+
+        var showSignUpBottomSheet by remember { mutableStateOf(false) }
+
+        val openSignUpBottomSheet: (() -> Unit) -> Unit = { callback ->
+            showSignUpBottomSheet = true
+            loginCallback = callback
+        }
+
+        val onSignUpSuccess: () -> Unit = {
+            showSignUpBottomSheet = false
+            appState.updateIsLoggedIn(true)
+            loginCallback()
         }
 
         LoginScreenBottomSheet(
             loginViewModel = loginViewModel,
             showBottomSheet = showLoginBottomSheet,
             onClose = onCloseSheet,
-            onLoginSuccess = onLoginSuccess
+            onLoginSuccess = onLoginSuccess,
+            onSignOut = loginViewModel::onSignOut,
+        )
+
+        SignUpBottomSheet(
+            loginViewModel = loginViewModel,
+            showBottomSheet = showSignUpBottomSheet,
+            onClose = { showSignUpBottomSheet = false },
+            onSignUpSuccess = onSignUpSuccess,
+            onSignOut = loginViewModel::onSignOut
         )
 
         AppNavHost(
             appState = appState,
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
-            onLogout = onLogout
+            onLogout = onLogout,
+            openSignUpBottomSheet = openSignUpBottomSheet
         )
     }
 }

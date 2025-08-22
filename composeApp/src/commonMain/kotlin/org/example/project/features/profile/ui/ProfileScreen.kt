@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,19 +51,28 @@ fun ProfileRoute(
     profileViewModel: ProfileViewModel = koinViewModel(),
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
+    openSignUpBottomSheet: (() -> Unit) -> Unit,
     onLogout: () -> Unit
 ) {
-    val profileUiState = profileViewModel.profileUiState.collectAsState()
+    val profileUiState by profileViewModel.profileUiState.collectAsState()
+
     ProfileScreen(
         isUserLoggedIn = isUserLoggedIn,
-        profileUiState = profileUiState.value,
-        onEditProfile = {},
+        profileUiState = profileUiState,
+        onEditProfile = {
+        },
+        onSignUp = {
+            openSignUpBottomSheet {
+                profileViewModel.refresh()
+            }
+        },
         onLogin = {
             openLoginBottomSheet {
                 profileViewModel.refresh()
             }
         },
         onLogout = {
+            profileViewModel.signOut()
             onLogout()
         },
         profileViewModel = profileViewModel
@@ -75,6 +85,7 @@ fun ProfileScreen(
     profileUiState: ProfileScreenUiState,
     onEditProfile: () -> Unit,
     onLogin: () -> Unit,
+    onSignUp: () -> Unit,
     onLogout: () -> Unit,
     profileViewModel: ProfileViewModel
 ) {
@@ -97,7 +108,7 @@ fun ProfileScreen(
                 !isUserLoggedIn() -> {
                     NotLoggedInProfileScreen(
                         onLogin = onLogin,
-                        onSignUp = {}
+                        onSignUp = onSignUp
                     )
                 }
 
@@ -107,7 +118,7 @@ fun ProfileScreen(
 
                 profileUiState.error != null -> {
                     ErrorContent({
-                        profileViewModel.getUserInfo()
+                        profileViewModel.getUserInfo(user = profileUiState.userInfo)
                     })
                 }
 
@@ -143,40 +154,33 @@ fun ProfileContent(
                 .clip(CircleShape)
                 .border(
                     0.3.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), CircleShape
-                ).background(MaterialTheme.colorScheme.outline), contentScale = ContentScale.Crop
+                ).background(MaterialTheme.colorScheme.outline),
+            contentScale = ContentScale.Crop
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (userInfo.email.isNotBlank()) {
+            Text(
+                userInfo.email,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         Text(
-            userInfo.email,
+            "ID: ${userInfo.id.take(8)}...",
             style = TextStyle(
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onBackground
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedButton(
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-            onClick = onEditProfile,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colorScheme.primary,
-                containerColor = MaterialTheme.colorScheme.background
-
-            )
-        ) {
-            Text(
-                "Edit Profile",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
 
         Button(
             onClick = onLogout,
@@ -185,12 +189,7 @@ fun ProfileContent(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(
-                "Log Out",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                )
-            )
+            Text("Log Out", style = TextStyle(fontSize = 16.sp))
         }
     }
 }

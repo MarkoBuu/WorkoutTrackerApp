@@ -46,13 +46,14 @@ import workouttracker.composeapp.generated.resources.Res
 import workouttracker.composeapp.generated.resources.app_name
 import workouttracker.composeapp.generated.resources.report
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreenBottomSheet(
+fun SignUpBottomSheet(
     loginViewModel: LoginViewModel,
     showBottomSheet: Boolean,
     onClose: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    onSignUpSuccess: () -> Unit,
     onSignOut: () -> Unit
 ) {
     val uiState by loginViewModel.uiState.collectAsState()
@@ -68,12 +69,15 @@ fun LoginScreenBottomSheet(
 
     val scope = rememberCoroutineScope()
 
-    val onCloseIconClick = {
-        onClose()
-        loginViewModel.clearError()
-        loginViewModel.clearEmailAndPassword()
+    val onCloseIconClick: () -> Unit = {
         scope.launch {
+            loginViewModel.clearError()
             bottomSheetState.hide()
+        }.invokeOnCompletion {
+            if (!bottomSheetState.isVisible) {
+                onClose()
+                loginViewModel.clearEmailAndPassword()
+            }
         }
     }
 
@@ -136,7 +140,7 @@ fun LoginScreenBottomSheet(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        "Log into your account",
+                        "Create Account",
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -186,7 +190,7 @@ fun LoginScreenBottomSheet(
                         ),
                         value = uiState.password,
                         onValueChange = loginViewModel::onPasswordChange,
-                        label = { Text("Password") },
+                        label = { Text("Password (min. 6 characters)") },
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = PasswordVisualTransformation()
                     )
@@ -219,16 +223,16 @@ fun LoginScreenBottomSheet(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary
                             ),
-                            onClick = loginViewModel::onSingInClick,
-                            enabled = uiState.email.isNotBlank() && uiState.password.isNotBlank()
+                            onClick = loginViewModel::onSingUpClick,
+                            enabled = uiState.email.isNotBlank() && uiState.password.length >= 6
                         ) {
-                            Text("Log In")
+                            Text("Sign Up")
                         }
                     }
 
                     if (currentUser != null && !currentUser!!.isAnonymous) {
                         LaunchedEffect(currentUser) {
-                            onLoginSuccess()
+                            onSignUpSuccess()
                             onCloseIconClick()
                             loginViewModel.clearEmailAndPassword()
                         }

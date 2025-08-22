@@ -18,7 +18,10 @@ fun NavGraphBuilder.tabsNavGraph(
     tabNavController: NavHostController,
     isUserLoggedIn: () -> Boolean,
     openLoginBottomSheet: (() -> Unit) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    navigateToWorkout: () -> Unit,
+    openSignUpBottomSheet: (() -> Unit) -> Unit, // Add this
+
 ) {
     composable(Screen.Tabs.route) {
         TabsRoute(
@@ -27,7 +30,9 @@ fun NavGraphBuilder.tabsNavGraph(
             navigateToSearch = navigateToSearch,
             isUserLoggedIn = isUserLoggedIn,
             openLoginBottomSheet = openLoginBottomSheet,
-            onLogout = onLogout
+            onLogout = onLogout,
+            navigateToWorkout = navigateToWorkout,
+            openSignUpBottomSheet = openSignUpBottomSheet
         )
     }
 }

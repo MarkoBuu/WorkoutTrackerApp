@@ -11,6 +11,7 @@ import org.example.project.features.app.data.AppConstants.IS_LOGGED_IN
 import org.example.project.features.detail.navigation.navigateToDetail
 import org.example.project.features.search.navigation.navigateToSearch
 import org.example.project.features.tabs.navigation.navigateToTabs
+import org.example.project.features.workouts.navigation.navigateToWorkout
 import org.example.project.preferences.AppPreferences
 import org.koin.compose.koinInject
 
@@ -44,6 +45,7 @@ class AppState(
     fun navigateToTabs() = navController.navigateToTabs()
     fun navigateToDetail(exerciseId: String) = navController.navigateToDetail(exerciseId)
     fun navigateToSearch() = navController.navigateToSearch()
+    fun navigateToWorkout() = navController.navigateToWorkout()
     fun navigateBack() = navController.navigateUp()
 
     fun updateIsLoggedIn(isLoggedIn: Boolean) {
