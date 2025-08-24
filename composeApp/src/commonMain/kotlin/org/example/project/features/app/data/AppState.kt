@@ -13,7 +13,6 @@ import org.example.project.features.search.navigation.navigateToSearch
 import org.example.project.features.tabs.navigation.navigateToTabs
 import org.example.project.features.workouts.navigation.navigateToWorkout
 import org.example.project.preferences.AppPreferences
-import org.koin.compose.koinInject
 
 @Composable
 fun rememberAppState(

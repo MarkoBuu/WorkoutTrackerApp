@@ -1,7 +1,7 @@
 package org.example.project.di
 
-import org.example.project.features.favorites.ui.FavoritesScreenViewModel
 import org.example.project.features.detail.ui.WorkoutDetailViewModel
+import org.example.project.features.favorites.ui.FavoritesScreenViewModel
 import org.example.project.features.feed.ui.FeedViewModel
 import org.example.project.features.login.ui.BaseViewModel
 import org.example.project.features.login.ui.LoginViewModel

@@ -1,5 +1,6 @@
 package org.example.project.features.feed.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,18 +16,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -35,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -51,20 +63,26 @@ import kotlinx.datetime.plus
 import org.example.project.features.common.domain.entities.WorkoutItem
 import org.example.project.features.components.ErrorContent
 import org.example.project.features.components.Loader
+import org.example.project.features.profile.ui.ProfileViewModel
 import org.example.project.features.workouts.data.WorkoutSession
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedRoute(
     navigateToWorkout: () -> Unit,
-    feedViewModel: FeedViewModel = koinViewModel()
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
+    feedViewModel: FeedViewModel = koinViewModel(),
+    profileViewModel: ProfileViewModel = koinViewModel()
 ) {
     val feedUiState = feedViewModel.feedUiState.collectAsState()
-
     FeedScreen(
         feedUiState = feedUiState.value,
         navigateToWorkout = navigateToWorkout,
-        feedViewModel = feedViewModel
+        feedViewModel = feedViewModel,
+        profileViewModel = profileViewModel,
+        isUserLoggedIn = isUserLoggedIn,
+        openLoginBottomSheet = openLoginBottomSheet
     )
 }
 
@@ -72,19 +90,96 @@ fun FeedRoute(
 fun FeedScreen(
     feedUiState: FeedUiState,
     navigateToWorkout: () -> Unit,
-    feedViewModel: FeedViewModel
+    feedViewModel: FeedViewModel,
+    profileViewModel: ProfileViewModel,
+    isUserLoggedIn: () -> Boolean,
+    openLoginBottomSheet: (() -> Unit) -> Unit,
 ) {
     val selectedDate by feedViewModel.selectedDate.collectAsState()
     val filteredWorkouts by feedViewModel.filteredWorkouts.collectAsState()
     val filteredWorkoutItems by feedViewModel.filteredWorkoutItems.collectAsState()
+
+    var showAlertDialog by remember { mutableStateOf(false) }
+
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    if (showAddDialog) {
+        AddWorkoutDialog(
+            selectedDate = selectedDate,
+            onDismiss = { showAddDialog = false },
+            onSaveWorkout = { workoutItem ->
+                feedViewModel.addWorkoutItem(selectedDate, workoutItem)
+                showAddDialog = false
+            }
+        )
+    }
+
+    if (showAlertDialog) {
+        AlertDialog(
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = {
+                showAlertDialog = false
+            },
+            title = {
+                Text(
+                    text = "Update Workouts",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                )
+            },
+            text = {
+                Text(
+                    text = "Login to Add/Remove Workouts",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = {
+                        showAlertDialog = false
+                        openLoginBottomSheet {
+                            profileViewModel.refresh()
+                        }
+                    }
+                ) {
+                    Text("Log In")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.background
+
+                    ),
+                    onClick = {
+                        showAlertDialog = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = { AppBar() },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    showAddWorkoutOptions(feedViewModel, selectedDate)
-                    /*navigateToWorkout()*/
+                    if (!isUserLoggedIn()) {
+                        showAlertDialog = true
+                    } else {
+                        showAddDialog = true
+                    }
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -106,7 +201,8 @@ fun FeedScreen(
                     WorkoutsForDate(
                         workoutItems = filteredWorkoutItems,
                         workoutSessions = filteredWorkouts,
-                        selectedDate = selectedDate
+                        selectedDate = selectedDate,
+                        feedViewModel = feedViewModel
                     )
                 }
             }
@@ -118,15 +214,17 @@ fun FeedScreen(
 fun WorkoutsForDate(
     workoutItems: List<WorkoutItem>,
     workoutSessions: List<WorkoutSession>,
-    selectedDate: LocalDate
-) {
+    selectedDate: LocalDate,
+    feedViewModel: FeedViewModel,
+
+    ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
-            "Workouts on ${selectedDate.dayOfMonth}.${selectedDate.monthNumber}.${selectedDate.year}",
+            "Workouts on: ${selectedDate.dayOfMonth}.${selectedDate.monthNumber}.${selectedDate.year}",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -141,22 +239,23 @@ fun WorkoutsForDate(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         } else {
-            // Show individual workout items
             if (workoutItems.isNotEmpty()) {
-                Text(
-                    "Exercises:",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
                 LazyColumn {
                     items(workoutItems) { workoutItem ->
-                        WorkoutItemCard(workoutItem = workoutItem)
+                        WorkoutItemCard(
+                            workoutItem = workoutItem,
+                            onDeleteClick = {
+                                feedViewModel.deleteWorkoutItem(
+                                    selectedDate,
+                                    workoutItem
+                                )
+                            }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
 
-            // Show workout sessions
             if (workoutSessions.isNotEmpty()) {
                 Text(
                     "Workout Sessions:",
@@ -175,27 +274,84 @@ fun WorkoutsForDate(
 }
 
 @Composable
-fun WorkoutItemCard(workoutItem: WorkoutItem) {
+fun WorkoutItemCard(
+    workoutItem: WorkoutItem,
+    modifier: Modifier = Modifier,
+    onDeleteClick: () -> Unit
+) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text("Delete Exercise?") },
+            text = { Text("Are you sure you want to delete \"${workoutItem.name}\"? This action cannot be undone.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDeleteClick()
+                        showDeleteConfirm = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                workoutItem.name,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                "Target: ${workoutItem.targetMuscles.joinToString()}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                "Equipment: ${workoutItem.equipments.joinToString()}",
-                style = MaterialTheme.typography.bodySmall
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    workoutItem.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    "Target muscles: ${workoutItem.targetMuscles.joinToString()}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    "Workout type: ${workoutItem.exerciseType}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    "Equipment used: ${workoutItem.equipments.joinToString()}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            IconButton(
+                onClick = { showDeleteConfirm = true },
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete exercise",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
@@ -218,31 +374,12 @@ fun WorkoutSessionCard(session: WorkoutSession) {
                 "${session.workoutItems.size} exercises",
                 style = MaterialTheme.typography.bodySmall
             )
+
             session.duration?.let { duration ->
                 Text("Duration: $duration minutes", style = MaterialTheme.typography.bodySmall)
             }
         }
     }
-}
-
-// Simple function to simulate adding a workout
-private fun showAddWorkoutOptions(feedViewModel: FeedViewModel, date: LocalDate) {
-    // This would typically open a dialog or navigate to exercise selection
-    // For demo purposes, let's add a sample workout item
-    val sampleWorkoutItem = WorkoutItem(
-        exerciseId = "sample_${Clock.System.now().epochSeconds}",
-        name = "Sample Exercise",
-        imageUrl = "",
-        bodyParts = listOf("Chest"),
-        equipments = listOf("Dumbbell"),
-        exerciseType = "Strength",
-        targetMuscles = listOf("Pectorals"),
-        secondaryMuscles = listOf("Triceps"),
-        keywords = listOf("chest", "dumbbell"),
-        isFavorite = false
-    )
-
-    feedViewModel.addWorkoutItem(date, sampleWorkoutItem)
 }
 
 @Composable
@@ -411,4 +548,111 @@ fun SimpleWeekView(
             }
         }
     }
+}
+
+@Composable
+fun AddWorkoutDialog(
+    selectedDate: LocalDate,
+    onDismiss: () -> Unit,
+    onSaveWorkout: (WorkoutItem) -> Unit
+) {
+    var exerciseName by remember { mutableStateOf("") }
+    var equipment by remember { mutableStateOf("") }
+    var exerciseType by remember { mutableStateOf("") }
+    var targetMuscles by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                "Add New Exercise",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = exerciseName,
+                    onValueChange = { exerciseName = it },
+                    label = { Text("Exercise Name *") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = targetMuscles,
+                    onValueChange = { targetMuscles = it },
+                    label = { Text("Target Muscles") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    placeholder = { Text("e.g., Pectorals, Triceps, Deltoids") }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = equipment,
+                    onValueChange = { equipment = it },
+                    label = { Text("Equipment") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    placeholder = { Text("e.g., Dumbbell, Bench, Barbell") }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = exerciseType,
+                    onValueChange = { exerciseType = it },
+                    label = { Text("Workout Type") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    placeholder = { Text("e.g., Strength, Cardio, Stretch") }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    "* Required field\nSeparate multiple values with commas",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val workoutItem = WorkoutItem(
+                        exerciseId = "custom_${Clock.System.now().epochSeconds}",
+                        name = exerciseName.ifEmpty { "Custom Exercise" },
+                        imageUrl = "",
+                        bodyParts = emptyList(),
+                        equipments = equipment.split(",").map { it.trim() }
+                            .filter { it.isNotEmpty() },
+                        exerciseType = exerciseType.ifEmpty { "Custom" },
+                        targetMuscles = targetMuscles.split(",").map { it.trim() }
+                            .filter { it.isNotEmpty() },
+                        secondaryMuscles = emptyList(),
+                        keywords = emptyList(),
+                        isFavorite = false
+                    )
+                    onSaveWorkout(workoutItem)
+                },
+                enabled = exerciseName.isNotEmpty()
+            ) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

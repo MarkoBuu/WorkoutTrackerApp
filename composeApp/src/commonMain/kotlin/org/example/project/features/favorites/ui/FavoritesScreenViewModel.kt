@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.features.detail.ui.WorkoutDetailUpdateIsFavoriteUiState
 import org.example.project.features.favorites.domain.FavoriteWorkoutRepository
 
 class FavoritesScreenViewModel(

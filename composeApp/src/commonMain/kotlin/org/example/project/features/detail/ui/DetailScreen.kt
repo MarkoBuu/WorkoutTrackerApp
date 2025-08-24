@@ -103,6 +103,7 @@ fun DetailRoute(
                     text = "Update Favorites",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 )
             },

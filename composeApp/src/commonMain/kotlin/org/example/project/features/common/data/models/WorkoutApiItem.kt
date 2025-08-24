@@ -1,6 +1,6 @@
 package org.example.project.features.common.data.models
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.example.project.features.common.domain.entities.WorkoutItem
 
 @Serializable

@@ -1,6 +1,5 @@
 package org.example.project.features.search.ui
 
-import org.example.project.features.common.domain.entities.WorkoutDetailItem
 import org.example.project.features.common.domain.entities.WorkoutItem
 
 data class SearchScreenState (

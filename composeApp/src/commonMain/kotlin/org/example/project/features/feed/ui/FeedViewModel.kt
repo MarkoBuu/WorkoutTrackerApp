@@ -53,11 +53,9 @@ class FeedViewModel(
     private val _selectedDate = MutableStateFlow(LocalDate.today())
     val selectedDate = _selectedDate.asStateFlow()
 
-    // Store workout sessions with date as key
     private val _workoutSessions = MutableStateFlow<Map<LocalDate, List<WorkoutSession>>>(emptyMap())
-    val workoutSessions = _workoutSessions.asStateFlow()
+    private val workoutSessions = _workoutSessions.asStateFlow()
 
-    // Get workouts for selected date
     val filteredWorkouts = combine(selectedDate, workoutSessions) { date, sessions ->
         sessions[date] ?: emptyList()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -66,16 +64,15 @@ class FeedViewModel(
         _selectedDate.value = date
     }
 
-    fun addWorkoutSession(session: WorkoutSession) {
-        _workoutSessions.update { currentSessions ->
-            val existingSessions = currentSessions[session.date] ?: emptyList()
-            currentSessions + (session.date to (existingSessions + session))
+    fun deleteWorkoutItem(date: LocalDate, workoutItem: WorkoutItem) {
+        _workoutItemsWithDate.update { currentItems ->
+            val existingItems = currentItems[date] ?: emptyList()
+            currentItems + (date to existingItems.filter { it.exerciseId != workoutItem.exerciseId })
         }
     }
 
-    // If you want to also store individual workout items with dates
     private val _workoutItemsWithDate = MutableStateFlow<Map<LocalDate, List<WorkoutItem>>>(emptyMap())
-    val workoutItemsWithDate = _workoutItemsWithDate.asStateFlow()
+    private val workoutItemsWithDate = _workoutItemsWithDate.asStateFlow()
 
     val filteredWorkoutItems = combine(selectedDate, workoutItemsWithDate) { date, itemsMap ->
         itemsMap[date] ?: emptyList()

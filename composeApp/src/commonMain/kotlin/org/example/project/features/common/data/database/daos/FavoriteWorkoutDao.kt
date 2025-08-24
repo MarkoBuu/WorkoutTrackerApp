@@ -5,12 +5,9 @@ import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.example.project.WorkoutDetail
 import org.example.project.features.common.data.database.DbHelper
 import org.example.project.features.common.data.database.workoutDetailEntityMapper
-import org.example.project.features.common.data.database.workoutEntityMapper
 import org.example.project.features.common.domain.entities.WorkoutDetailItem
-import org.example.project.features.common.domain.entities.WorkoutItem
 
 class FavoriteWorkoutDao(
     private val dbHelper: DbHelper

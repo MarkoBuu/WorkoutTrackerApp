@@ -127,7 +127,9 @@ fun TabsScreen(
             Modifier.padding(innerPadding)
         ) {
             feedNavGraph(
-                navigateToWorkout = navigateToWorkout
+                navigateToWorkout = navigateToWorkout,
+                isUserLoggedIn = isUserLoggedIn,
+                openLoginBottomSheet = openLoginBottomSheet
             )
             exercisesNavGraph(
                 navigateToDetail = navigateToDetail,
