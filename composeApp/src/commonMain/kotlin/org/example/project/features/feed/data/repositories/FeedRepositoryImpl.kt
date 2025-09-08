@@ -3,7 +3,6 @@ package org.example.project.features.feed.data.repositories
 import org.example.project.features.common.domain.entities.WorkoutItem
 import org.example.project.features.feed.data.datasources.FeedLocalDataSource
 import org.example.project.features.feed.data.datasources.FeedRemoteDataSource
-import org.example.project.features.feed.domain.repositories.FeedRepository
 
 class FeedRepositoryImpl(
     private val feedLocalDataSource: FeedLocalDataSource,
@@ -27,3 +26,4 @@ class FeedRepositoryImpl(
         }
     }
 }
+

@@ -1,16 +1,9 @@
-import kotlin.String;
-import kotlin.collections.List;
-
 CREATE TABLE FavoriteWorkout (
     exerciseId TEXT NOT NULL PRIMARY KEY,
     recipe_id TEXT UNIQUE NOT NULL,
     added_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (recipe_id) REFERENCES WorkoutDetail(exerciseId) ON DELETE CASCADE
 );
-
-insertFavoriteWorkout:
-INSERT INTO FavoriteWorkout(exerciseId, recipe_id, added_at)
-VALUES(?, ?, ?);
 
 upsertFavoriteWorkout {
     UPDATE FavoriteWorkout
@@ -22,9 +15,6 @@ upsertFavoriteWorkout {
     VALUES(:exerciseId, :recipe_id, :added_at);
 }
 
-selectAllFavoritesWorkoutIds:
-SELECT exerciseId FROM FavoriteWorkout;
-
 selectAllFavoriteWorkouts:
 SELECT WorkoutDetail.* FROM WorkoutDetail
 INNER JOIN FavoriteWorkout ON WorkoutDetail.exerciseId = FavoriteWorkout.recipe_id;
@@ -34,6 +24,3 @@ SELECT * FROM FavoriteWorkout WHERE recipe_id = ?;
 
 deleteFavoriteWorkoutById:
 DELETE FROM FavoriteWorkout WHERE recipe_id = ?;
-
-deleteFavoriteWorkout:
-DELETE FROM FavoriteWorkout;

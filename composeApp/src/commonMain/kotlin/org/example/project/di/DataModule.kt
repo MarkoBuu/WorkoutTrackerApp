@@ -17,7 +17,7 @@ import org.example.project.features.feed.data.datasources.FeedLocalDataSourceImp
 import org.example.project.features.feed.data.datasources.FeedRemoteDataSource
 import org.example.project.features.feed.data.datasources.FeedRemoteDataSourceImpl
 import org.example.project.features.feed.data.repositories.FeedRepositoryImpl
-import org.example.project.features.feed.domain.repositories.FeedRepository
+import org.example.project.features.feed.data.repositories.FeedRepository
 import org.example.project.features.login.auth.AuthService
 import org.example.project.features.login.auth.AuthServiceImpl
 import org.example.project.features.search.data.datasources.SearchWorkoutLocalDataSource

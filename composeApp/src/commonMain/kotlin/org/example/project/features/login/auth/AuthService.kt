@@ -9,8 +9,6 @@ interface AuthService {
     val isAuthenticated: Boolean
 
     suspend fun authenticate(email: String, password: String)
-
     suspend fun createUser(email: String, password: String)
-
     suspend fun signOut()
 }

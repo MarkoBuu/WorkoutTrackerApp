@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.example.project.features.common.domain.entities.WorkoutItem
-import org.example.project.features.feed.domain.repositories.FeedRepository
+import org.example.project.features.feed.data.repositories.FeedRepository
 import org.example.project.features.workouts.data.WorkoutSession
 
 class FeedViewModel(
