@@ -122,7 +122,7 @@ fun FeedScreen(
             },
             title = {
                 Text(
-                    text = "Update Workouts",
+                    text = "Add Workouts",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -565,7 +565,7 @@ fun AddWorkoutDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Add New Exercise",
+                "Add New Workout",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -579,7 +579,7 @@ fun AddWorkoutDialog(
                 OutlinedTextField(
                     value = exerciseName,
                     onValueChange = { exerciseName = it },
-                    label = { Text("Exercise Name *") },
+                    label = { Text("Workout Name *") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))

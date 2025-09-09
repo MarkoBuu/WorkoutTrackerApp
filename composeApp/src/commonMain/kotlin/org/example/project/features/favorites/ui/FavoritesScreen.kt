@@ -148,7 +148,7 @@ fun FavoriteExerciseCard(
             .height(160.dp)
     ) {
         AsyncImage(
-            model = workout.imageUrl,
+            model = /*"https://cors-anywhere.herokuapp.com/" + */workout.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = imageModifier

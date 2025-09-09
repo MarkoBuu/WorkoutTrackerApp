@@ -9,7 +9,8 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-const val BASE_URL = "https://exercisedb-api1.p.rapidapi.com/api/v1"
+const val PROXY_SERVER = "https://cors-anywhere.herokuapp.com/"
+const val BASE_URL = /*PROXY_SERVER + */ "https://exercisedb-api1.p.rapidapi.com/api/v1"
 
 val httpClient = HttpClient {
     install(ContentNegotiation) {
@@ -24,3 +25,4 @@ val httpClient = HttpClient {
         level = LogLevel.HEADERS
     }
 }
+

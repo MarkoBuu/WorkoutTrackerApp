@@ -261,7 +261,7 @@ fun WorkoutDetailMainContent(
         ) {
             item {
                 AsyncImage(
-                    model = workoutDetail.imageUrl,
+                    model = /*"https://cors-anywhere.herokuapp.com/" + */workoutDetail.imageUrl,
                     contentDescription = workoutDetail.name,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxWidth().height(200.dp)

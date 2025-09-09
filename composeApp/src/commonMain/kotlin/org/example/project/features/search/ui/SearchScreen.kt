@@ -209,7 +209,7 @@ fun SearchWorkoutItem(
             .height(160.dp)
     ) {
         AsyncImage(
-            model = workout.imageUrl,
+            model = /*"https://cors-anywhere.herokuapp.com/" +*/ workout.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier.size(80.dp).clip(RoundedCornerShape(8.dp))

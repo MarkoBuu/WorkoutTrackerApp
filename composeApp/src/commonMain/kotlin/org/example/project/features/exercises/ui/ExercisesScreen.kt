@@ -239,7 +239,7 @@ fun ExerciseCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = workout.imageUrl,
+                model = /*"https://cors-anywhere.herokuapp.com/" +*/ workout.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
